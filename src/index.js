@@ -1,20 +1,30 @@
-const express = require('express');
-const app = express();
+const express = require("express")
+const helmet = require("helmet")
+const app = express()
 
-const { config } = require('./config');
-const platziStore = require('./routes')
+// body parser
+app.use(express.json())
+app.use(helmet())
 
-app.get('/', (req, res) => {
-  let userInfo = req.header("user-agent");
-  res.send(`UserInfo: ${userInfo}`);
-});
+// Server config
+const { config } = require("./config")
 
-platziStore(app);
+//Routes
+const platziStore = require("./routes")
+const authApi = require("./routes/auth")
 
-app.listen(config.port, err => {
+app.get("/", (req, res) => {
+  let userInfo = req.header("user-agent")
+  res.send(`UserInfo: ${userInfo}`)
+})
+
+platziStore(app)
+authApi(app)
+
+app.listen(config.port, (err) => {
   if (err) {
-    console.error("Error: ", err);
-    return;
+    console.error("Error: ", err)
+    return
   }
-  console.log(`Listening http://localhost:${config.port}`);
-});
+  console.log(`Listening http://localhost:${config.port}`)
+})
